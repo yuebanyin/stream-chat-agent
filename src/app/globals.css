@@ -948,7 +948,8 @@ button:disabled {
 }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   width: 100%;
   padding: 10px 11px;
   border: 1px solid #e2e8e3;
@@ -968,11 +969,22 @@ button:disabled {
   color: #a3aba5;
 }
 
+.field select {
+  color: #27312b;
+  cursor: pointer;
+}
+
 .field-note {
   margin: -7px 0 0;
   color: #8b948e;
   font-size: 9px;
   line-height: 1.5;
+}
+
+.field-note a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .field-error {

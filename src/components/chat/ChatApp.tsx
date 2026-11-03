@@ -91,7 +91,9 @@ export function ChatApp() {
     }
     if (!store.settings.apiKey.trim()) {
       setPendingPrompt(content);
-      store.setError("Add your model API key to send this message.");
+      store.setError(
+        "Add a provider API key or choose the local Ollama preset in model settings.",
+      );
       setSettingsOpen(true);
       return;
     }

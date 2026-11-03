@@ -7,11 +7,11 @@
 ![GitHub](https://img.shields.io/badge/GitHub-yuebanyin%2Fstream--chat--agent-181717?logo=github)
 [![Live demo](https://img.shields.io/badge/Live%20Demo-Vercel-111111?logo=vercel)](https://stream-chat-agent.vercel.app)
 
-**A developer-first, open-source AI chat workspace with incremental streaming, rich Markdown, and bring-your-own-model credentials.**
+**A developer-first, open-source AI chat workspace with incremental streaming, rich Markdown, local Ollama support, and bring-your-own-model credentials.**
 
 [Try the live demo](https://stream-chat-agent.vercel.app) · [Source code](https://github.com/yuebanyin/stream-chat-agent) · [Deploy your own instance](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyuebanyin%2Fstream-chat-agent)
 
-The public demo is open to visitors and uses bring-your-own-key (BYOK). Add your own provider API key in **Model settings**; no shared API key is provided.
+The public demo is open to visitors and uses bring-your-own-key (BYOK). Add your own provider API key in **Model settings**; no shared API key is provided. To chat without a provider key, run the app locally with Ollama.
 
 ## What it does
 
@@ -29,7 +29,7 @@ Next.js 15 App Router · React 18 · TypeScript strict mode · Tailwind CSS v4 �
 
 - Node.js 20.11 or later
 - pnpm 10
-- An API key from an OpenAI-compatible provider, or a local Ollama instance for development
+- An API key from an OpenAI-compatible provider, or [Ollama](https://ollama.com/download) running locally
 
 ## Quick start
 
@@ -41,18 +41,24 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000), choose **Model settings**, and add a provider API key, base URL, and model name. No provider key is needed in `.env.local`; the user-supplied key is sent to the same-origin chat route for each request.
+Open [http://localhost:3000](http://localhost:3000) and choose a setup under **Model settings**:
+
+- **Ollama (local, no API key):** Install and start [Ollama](https://ollama.com/download), then run `ollama pull llama3.2`. Select the Ollama preset; it fills in the local URL, model, and a placeholder credential automatically. The placeholder is not a real key. This preset works with StreamChat's local development server (`pnpm dev`), not the public Vercel demo or a production server.
+- **Groq:** Create your own key in [Groq Console](https://console.groq.com/keys), select the Groq preset, and use a currently available model ID from its [model list](https://console.groq.com/docs/models). Free access and rate limits depend on Groq's current plan.
+- **OpenRouter:** Create your own key at [OpenRouter](https://openrouter.ai/keys), select the OpenRouter preset, and choose a model ID from its [free model list](https://openrouter.ai/models?free=true). Free model availability and limits can change.
+
+No provider key is needed in `.env.local`; a user-supplied hosted-provider key is sent to the same-origin chat route for each request.
 
 ### Provider examples
 
-| Provider                         | Base URL                         | Notes                                                                                                           |
-| -------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Groq                             | `https://api.groq.com/openai/v1` | Create your own key in the provider dashboard. Free-plan limits can change.                                     |
-| OpenRouter                       | `https://openrouter.ai/api/v1`   | Choose an available model in your OpenRouter account.                                                           |
-| Ollama                           | `http://localhost:11434/v1`      | Development only; start Ollama and pull a model first. The route accepts loopback HTTP only outside production. |
-| Other OpenAI-compatible provider | Your provider's HTTPS `/v1` URL  | Add its exact hostname to `LLM_ALLOWED_HOSTS` on the server.                                                    |
+| Provider                         | Base URL                         | Notes                                                                                                            |
+| -------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Ollama                           | `http://localhost:11434/v1`      | No real API key; run Ollama and pull a model first. Only works with `pnpm dev`, not production or Vercel.        |
+| Groq                             | `https://api.groq.com/openai/v1` | Requires your own key. Free access, available models, and rate limits depend on Groq's current plan.             |
+| OpenRouter                       | `https://openrouter.ai/api/v1`   | Requires your own key. Choose an available free model in your OpenRouter account; model availability can change. |
+| Other OpenAI-compatible provider | Your provider's HTTPS `/v1` URL  | Add its exact hostname to `LLM_ALLOWED_HOSTS` on the server.                                                     |
 
-For local Ollama, enter a non-empty placeholder such as `ollama` in the API key field; the local OpenAI-compatible endpoint does not require provider authentication. Ollama and provider free tiers are subject to each provider's availability, terms, and rate limits. A Vercel-hosted app cannot reach Ollama running on a visitor's computer.
+The Ollama preset sets `ollama` as a placeholder because the current settings form requires a non-empty value; Ollama does not require or check it. Hosted free tiers are not anonymous: users still need their own provider account and key. A Vercel-hosted app cannot reach Ollama running on a visitor's computer.
 
 ## Configuration
 

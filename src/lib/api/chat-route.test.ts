@@ -82,3 +82,34 @@ test("rejects cross-origin calls before contacting a provider", async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+test("proxies local Ollama requests with its non-secret placeholder", async () => {
+  const originalFetch = globalThis.fetch;
+  let upstreamUrl: string | null = null;
+  let usedOllamaPlaceholder = false;
+  globalThis.fetch = async (input, init) => {
+    upstreamUrl = String(input);
+    const authorization = new Headers(init?.headers).get("Authorization");
+    usedOllamaPlaceholder = authorization?.endsWith("ollama") ?? false;
+    return new Response("data: [DONE]\n\n", {
+      headers: { "Content-Type": "text/event-stream" },
+    });
+  };
+
+  try {
+    const response = await POST(
+      createRequest({
+        ...requestBody,
+        apiKey: "ollama",
+        baseUrl: "http://localhost:11434/v1",
+        model: "llama3.2",
+      }),
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(upstreamUrl, "http://localhost:11434/v1/chat/completions");
+    assert.equal(usedOllamaPlaceholder, true);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
