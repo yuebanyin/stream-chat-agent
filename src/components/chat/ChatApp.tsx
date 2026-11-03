@@ -33,6 +33,7 @@ function createMessage(
 export function ChatApp() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const sessions = useChatStore((state) => state.sessions);
@@ -89,9 +90,8 @@ export function ChatApp() {
       return;
     }
     if (!store.settings.apiKey.trim()) {
-      store.setError(
-        "Add your model API key in settings before sending a message.",
-      );
+      setPendingPrompt(content);
+      store.setError("Add your model API key to send this message.");
       setSettingsOpen(true);
       return;
     }
@@ -162,6 +162,14 @@ export function ChatApp() {
     }
   }
 
+  function handleSettingsSaved() {
+    if (pendingPrompt) {
+      const prompt = pendingPrompt;
+      setPendingPrompt(null);
+      void sendMessage(prompt);
+    }
+  }
+
   if (!isHydrated) {
     return (
       <main aria-label="Loading saved conversations" className="app-loading">
@@ -210,10 +218,15 @@ export function ChatApp() {
             </div>
           </div>
           <div className="topbar-actions">
-            <span className="model-chip">
+            <button
+              aria-label={`Current model: ${settings.model || "No model selected"}. Open model settings`}
+              className="model-chip"
+              onClick={() => setSettingsOpen(true)}
+              type="button"
+            >
               <span aria-hidden="true" className="model-chip-dot" />
               {settings.model || "No model selected"}
-            </span>
+            </button>
             <button
               aria-label="Open model settings"
               className="icon-button settings-icon-button"
@@ -289,14 +302,18 @@ export function ChatApp() {
         </div>
 
         <ChatInput
-          disabled={!settings.apiKey.trim()}
           isStreaming={activeIsStreaming}
           onSend={(message) => void sendMessage(message)}
           onStop={stopGenerating}
         />
       </section>
 
-      {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && (
+        <SettingsPanel
+          onClose={() => setSettingsOpen(false)}
+          onSaved={handleSettingsSaved}
+        />
+      )}
     </main>
   );
 }

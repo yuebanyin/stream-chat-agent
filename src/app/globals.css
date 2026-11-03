@@ -310,6 +310,7 @@ button:disabled {
   flex: 0 0 67px;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   padding: 0 35px;
   border-bottom: 1px solid #eff1ef;
   background: rgb(255 255 255 / 94%);
@@ -322,9 +323,18 @@ button:disabled {
   align-items: center;
 }
 
+.topbar-left {
+  flex: 1;
+}
+
+.topbar-actions {
+  flex: 0 0 auto;
+}
+
 .workspace-title {
   display: flex;
   min-width: 0;
+  flex: 1;
   flex-direction: column;
   gap: 3px;
 }
@@ -349,14 +359,26 @@ button:disabled {
 
 .model-chip {
   display: inline-flex;
+  max-width: 220px;
   height: 29px;
   align-items: center;
   gap: 8px;
   padding: 0 10px;
+  overflow: hidden;
   border: 1px solid #eaeeeb;
   border-radius: 20px;
+  background: #fff;
   color: #627068;
+  cursor: pointer;
   font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-chip:hover {
+  border-color: #b8cec4;
+  background: #fbfdfb;
+  color: #2c4438;
 }
 
 .model-chip-dot {

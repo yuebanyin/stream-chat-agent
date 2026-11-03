@@ -20,9 +20,10 @@ type SettingsFormValues = z.output<typeof settingsSchema>;
 
 interface SettingsPanelProps {
   onClose: () => void;
+  onSaved: () => void;
 }
 
-export function SettingsPanel({ onClose }: SettingsPanelProps) {
+export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
   const settings = useChatStore((state) => state.settings);
   const updateSettings = useChatStore((state) => state.updateSettings);
   const {
@@ -41,6 +42,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
 
   function onSubmit(values: SettingsFormValues) {
     updateSettings(values);
+    onSaved();
     onClose();
   }
 
@@ -107,14 +109,29 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
           </label>
 
           <label className="field">
-            <span>Model</span>
+            <span>Model ID</span>
             <input
               autoCapitalize="none"
               autoComplete="off"
+              list="model-suggestions"
               placeholder="gpt-4o-mini"
               spellCheck="false"
               {...register("model")}
             />
+            <datalist id="model-suggestions">
+              <option value="gpt-4o-mini" />
+              <option value="gpt-4.1-mini" />
+              <option value="gpt-4.1" />
+              <option value="o4-mini" />
+              <option value="llama-3.3-70b-versatile" />
+              <option value="openai/gpt-oss-20b" />
+              <option value="openai/gpt-oss-120b" />
+              <option value="qwen/qwen3-32b" />
+            </datalist>
+            <span className="field-note">
+              Choose a suggestion or enter a model ID supported by your
+              provider.
+            </span>
             {errors.model && (
               <span className="field-error">{errors.model.message}</span>
             )}

@@ -12,18 +12,12 @@ const messageSchema = z.object({
 type MessageFormValues = z.infer<typeof messageSchema>;
 
 interface ChatInputProps {
-  disabled: boolean;
   isStreaming: boolean;
   onSend: (message: string) => void;
   onStop: () => void;
 }
 
-export function ChatInput({
-  disabled,
-  isStreaming,
-  onSend,
-  onStop,
-}: ChatInputProps) {
+export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
   const {
     register,
     handleSubmit,
@@ -45,7 +39,7 @@ export function ChatInput({
         <textarea
           aria-label="Message"
           autoComplete="off"
-          disabled={disabled || isStreaming}
+          disabled={isStreaming}
           maxLength={20_000}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
@@ -76,7 +70,7 @@ export function ChatInput({
           <button
             aria-label="Send message"
             className="send-button"
-            disabled={disabled}
+            disabled={isStreaming}
             type="submit"
           >
             <ArrowUp size={18} strokeWidth={2.2} />
