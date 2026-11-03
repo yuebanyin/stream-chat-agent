@@ -5,15 +5,13 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript)
 ![License](https://img.shields.io/badge/license-MIT-3b8067)
 ![GitHub](https://img.shields.io/badge/GitHub-yuebanyin%2Fstream--chat--agent-181717?logo=github)
-![Demo](https://img.shields.io/badge/demo-not%20deployed-lightgrey)
+[![Live demo](https://img.shields.io/badge/Live%20Demo-Vercel-111111?logo=vercel)](https://stream-chat-agent.vercel.app)
 
 **A developer-first, open-source AI chat workspace with incremental streaming, rich Markdown, and bring-your-own-model credentials.**
 
-> The public demo has not been deployed yet. This project intentionally does not ship with a shared provider key; configure your own model credentials to use it.
+[Try the live demo](https://stream-chat-agent.vercel.app) · [Source code](https://github.com/yuebanyin/stream-chat-agent) · [Deploy your own instance](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyuebanyin%2Fstream-chat-agent)
 
-[Source code](https://github.com/yuebanyin/stream-chat-agent) · [Deploy your own instance](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyuebanyin%2Fstream-chat-agent)
-
-<!-- Add a captured UI image at docs/screenshots/chat-workspace.png before the first public release. -->
+The public demo is open to visitors and uses bring-your-own-key (BYOK). Add your own provider API key in **Model settings**; no shared API key is provided.
 
 ## What it does
 
@@ -97,11 +95,9 @@ GitHub Actions runs the same checks on pushes and pull requests. A pre-commit ho
 3. Configure `LLM_ALLOWED_HOSTS` if you use a custom provider and set `NEXT_PUBLIC_GITHUB_URL` to the repository URL.
 4. Deploy. Each visitor configures their own provider key in the app.
 
-No live demo URL is listed until a deployment is configured and verified.
-
 ## Roadmap
 
-- [ ] Add a verified public demo and representative screenshots.
+- [ ] Add representative screenshots of the chat and settings screens.
 - [ ] Add focused component and API-route integration tests.
 - [ ] Connect the typed tool registry to model tool calling behind explicit user consent.
 - [ ] Explore document upload and retrieval-augmented generation (RAG).

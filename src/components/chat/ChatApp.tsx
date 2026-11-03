@@ -238,7 +238,10 @@ export function ChatApp() {
             <a
               aria-label="Open GitHub"
               className="icon-button github-link"
-              href={process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com"}
+              href={
+                process.env.NEXT_PUBLIC_GITHUB_URL ??
+                "https://github.com/yuebanyin/stream-chat-agent"
+              }
               rel="noreferrer noopener"
               target="_blank"
             >
