@@ -11,6 +11,8 @@
 
 [Try the live demo](https://stream-chat-agent.vercel.app) · [Source code](https://github.com/yuebanyin/stream-chat-agent) · [Deploy your own instance](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyuebanyin%2Fstream-chat-agent)
 
+[简体中文](./README.zh-CN.md)
+
 The public demo is open to visitors and uses bring-your-own-key (BYOK). Add your own provider API key in **Model settings**; no shared API key is provided. To chat without a provider key, run the app locally with Ollama.
 
 ## What it does
@@ -20,6 +22,7 @@ The public demo is open to visitors and uses bring-your-own-key (BYOK). Add your
 - Render GFM Markdown, tables, task lists, links, and Shiki-highlighted fenced code with a copy control.
 - Stop an in-progress response and show actionable errors for invalid credentials, limits, and interrupted streams.
 - Adapt the conversation sidebar and composer for mobile screens.
+- Switch the interface between English and Simplified Chinese, and choose a light or dark theme.
 
 ## Stack
 

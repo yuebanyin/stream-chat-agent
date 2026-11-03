@@ -4,12 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowUp, Square } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const messageSchema = z.object({
-  message: z.string().trim().min(1, "Write a message first.").max(20_000),
-});
-
-type MessageFormValues = z.infer<typeof messageSchema>;
+import { useUiPreferences } from "@/lib/ui-preferences";
 
 interface ChatInputProps {
   isStreaming: boolean;
@@ -18,6 +13,11 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
+  const { t } = useUiPreferences();
+  const messageSchema = z.object({
+    message: z.string().trim().min(1, t("writeMessage")).max(20_000),
+  });
+  type MessageFormValues = z.infer<typeof messageSchema>;
   const {
     register,
     handleSubmit,
@@ -37,7 +37,7 @@ export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
     <div className="composer-wrap">
       <form className="composer" onSubmit={handleSubmit(submit)}>
         <textarea
-          aria-label="Message"
+          aria-label={t("message")}
           autoComplete="off"
           disabled={isStreaming}
           maxLength={20_000}
@@ -47,7 +47,7 @@ export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
               void handleSubmit(submit)();
             }
           }}
-          placeholder="Ask anything..."
+          placeholder={t("askAnything")}
           rows={1}
           {...register("message", {
             onChange: (event) => {
@@ -59,7 +59,7 @@ export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
         />
         {isStreaming ? (
           <button
-            aria-label="Stop generating"
+            aria-label={t("stopGenerating")}
             className="send-button stop-button"
             onClick={onStop}
             type="button"
@@ -68,7 +68,7 @@ export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
           </button>
         ) : (
           <button
-            aria-label="Send message"
+            aria-label={t("sendMessage")}
             className="send-button"
             disabled={isStreaming}
             type="submit"
@@ -80,9 +80,7 @@ export function ChatInput({ isStreaming, onSend, onStop }: ChatInputProps) {
       {errors.message && (
         <p className="composer-error">{errors.message.message}</p>
       )}
-      <p className="composer-hint">
-        Enter to send · Shift + Enter for a new line
-      </p>
+      <p className="composer-hint">{t("composerHint")}</p>
     </div>
   );
 }

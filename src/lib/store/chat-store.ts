@@ -66,7 +66,7 @@ export const useChatStore = create<ChatStore>()(
         const now = Date.now();
         const session: ChatSession = {
           id: crypto.randomUUID(),
-          title: "New chat",
+          title: "",
           createdAt: now,
           updatedAt: now,
           messages: [],
@@ -95,7 +95,7 @@ export const useChatStore = create<ChatStore>()(
         set((state) => ({
           sessions: updateSession(state.sessions, sessionId, (session) => ({
             ...session,
-            title: "New chat",
+            title: "",
             updatedAt: Date.now(),
             messages: [],
           })),
@@ -106,7 +106,7 @@ export const useChatStore = create<ChatStore>()(
           sessions: updateSession(state.sessions, sessionId, (session) => ({
             ...session,
             title:
-              message.role === "user" && session.title === "New chat"
+              message.role === "user" && !session.title
                 ? message.content.slice(0, 40)
                 : session.title,
             updatedAt: Date.now(),

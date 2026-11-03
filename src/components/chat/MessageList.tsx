@@ -4,6 +4,7 @@ import { Bot, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type { ChatMessage } from "@/lib/types";
 import { MarkdownContent } from "@/components/chat/MarkdownContent";
+import { useUiPreferences } from "@/lib/ui-preferences";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -11,6 +12,7 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, isStreaming }: MessageListProps) {
+  const { t } = useUiPreferences();
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -27,23 +29,20 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
           <Bot size={25} strokeWidth={1.7} />
         </div>
         <p className="eyebrow">STREAMCHAT</p>
-        <h1>A clearer way to think with AI.</h1>
-        <p className="welcome-description">
-          Bring your own model, explore ideas, and keep every conversation
-          flowing.
-        </p>
+        <h1>{t("welcomeTitle")}</h1>
+        <p className="welcome-description">{t("welcomeDescription")}</p>
         <div className="suggestion-grid">
           <div className="suggestion-card">
             <span className="suggestion-icon">01</span>
-            <p>Explain a complex idea in simple terms</p>
+            <p>{t("suggestionOne")}</p>
           </div>
           <div className="suggestion-card">
             <span className="suggestion-icon">02</span>
-            <p>Turn rough notes into a clear action plan</p>
+            <p>{t("suggestionTwo")}</p>
           </div>
           <div className="suggestion-card">
             <span className="suggestion-icon">03</span>
-            <p>Review a code snippet and suggest improvements</p>
+            <p>{t("suggestionThree")}</p>
           </div>
         </div>
       </div>
@@ -69,14 +68,14 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
               </div>
               <div className="message-body">
                 <div className="message-author">
-                  {isUser ? "You" : "Assistant"}
+                  {isUser ? t("you") : t("assistant")}
                 </div>
                 <div className="message-content">
                   {message.content ? (
                     <MarkdownContent content={message.content} />
                   ) : isStreaming && index === messages.length - 1 ? (
                     <span
-                      aria-label="Generating response"
+                      aria-label={t("generatingResponse")}
                       className="typing-indicator"
                     >
                       <i />

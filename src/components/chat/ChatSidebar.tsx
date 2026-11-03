@@ -2,6 +2,7 @@
 
 import { MessageSquarePlus, Settings2, Trash2 } from "lucide-react";
 import type { ChatSession } from "@/lib/types";
+import { useUiPreferences } from "@/lib/ui-preferences";
 
 interface ChatSidebarProps {
   activeSessionId: string | null;
@@ -26,11 +27,13 @@ export function ChatSidebar({
   onOpenSettings,
   onSelectSession,
 }: ChatSidebarProps) {
+  const { t, language, toggleLanguage, theme, toggleTheme } =
+    useUiPreferences();
   return (
     <>
       {isVisible && (
         <button
-          aria-label="Close navigation"
+          aria-label={t("closeNavigation")}
           className="mobile-backdrop"
           onClick={onClose}
           type="button"
@@ -43,7 +46,7 @@ export function ChatSidebar({
           </div>
           <div>
             <p className="brand-name">streamchat</p>
-            <p className="brand-caption">YOUR AI WORKSPACE</p>
+            <p className="brand-caption">{t("brandCaption")}</p>
           </div>
         </div>
 
@@ -54,15 +57,15 @@ export function ChatSidebar({
           type="button"
         >
           <MessageSquarePlus size={17} />
-          <span>New conversation</span>
+          <span>{t("newConversation")}</span>
           <kbd>⌘ K</kbd>
         </button>
 
         <div className="sidebar-section-heading">
-          <span>RECENT</span>
+          <span>{t("recent")}</span>
           <span>{sessions.length.toString().padStart(2, "0")}</span>
         </div>
-        <nav aria-label="Conversations" className="session-list">
+        <nav aria-label={t("conversations")} className="session-list">
           {sessions.map((session) => (
             <div className="session-item" key={session.id}>
               <button
@@ -75,10 +78,14 @@ export function ChatSidebar({
                 type="button"
               >
                 <span className="session-dot" />
-                <span className="session-title">{session.title}</span>
+                <span className="session-title">
+                  {!session.title || session.title === "New chat"
+                    ? t("newConversation")
+                    : session.title}
+                </span>
               </button>
               <button
-                aria-label={`Delete ${session.title}`}
+                aria-label={`${t("deleteConversation")}: ${session.title}`}
                 className="session-delete"
                 disabled={isStreaming}
                 onClick={() => onDeleteSession(session.id)}
@@ -89,16 +96,14 @@ export function ChatSidebar({
             </div>
           ))}
           {sessions.length === 0 && (
-            <p className="empty-sessions">
-              Your conversations will appear here.
-            </p>
+            <p className="empty-sessions">{t("emptyConversations")}</p>
           )}
         </nav>
 
         <div className="sidebar-bottom">
           <div className="sidebar-status">
             <span aria-hidden="true" className="status-indicator" />
-            <span>Private by design</span>
+            <span>{t("privateByDesign")}</span>
           </div>
           <button
             className="settings-link"
@@ -106,8 +111,28 @@ export function ChatSidebar({
             type="button"
           >
             <Settings2 size={17} />
-            <span>Model settings</span>
+            <span>{t("modelSettings")}</span>
           </button>
+          <div className="sidebar-preferences">
+            <button
+              aria-label={t("switchLanguage")}
+              className="preference-button"
+              onClick={toggleLanguage}
+              title={t("switchLanguage")}
+              type="button"
+            >
+              {language === "en" ? t("langChinese") : t("langEnglish")}
+            </button>
+            <button
+              aria-label={theme === "light" ? t("themeDark") : t("themeLight")}
+              className="preference-button"
+              onClick={toggleTheme}
+              title={theme === "light" ? t("themeDark") : t("themeLight")}
+              type="button"
+            >
+              {theme === "light" ? t("dark") : t("light")}
+            </button>
+          </div>
         </div>
       </aside>
     </>

@@ -5,18 +5,25 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useChatStore } from "@/lib/store/chat-store";
+import { useUiPreferences } from "@/lib/ui-preferences";
 
-const settingsSchema = z.object({
-  apiKey: z.string().trim().min(1, "Enter an API key."),
-  baseUrl: z.string().trim().url("Enter a valid base URL."),
-  model: z.string().trim().min(1, "Enter a model name."),
-  systemPrompt: z.string().max(12_000),
-  temperature: z.coerce.number().min(0).max(2),
-  maxTokens: z.coerce.number().int().min(1).max(16_384),
-});
+function createSettingsSchema(messages: {
+  enterApiKey: string;
+  validBaseUrl: string;
+  enterModel: string;
+}) {
+  return z.object({
+    apiKey: z.string().trim().min(1, messages.enterApiKey),
+    baseUrl: z.string().trim().url(messages.validBaseUrl),
+    model: z.string().trim().min(1, messages.enterModel),
+    systemPrompt: z.string().max(12_000),
+    temperature: z.coerce.number().min(0).max(2),
+    maxTokens: z.coerce.number().int().min(1).max(16_384),
+  });
+}
 
-type SettingsFormInput = z.input<typeof settingsSchema>;
-type SettingsFormValues = z.output<typeof settingsSchema>;
+type SettingsFormInput = z.input<ReturnType<typeof createSettingsSchema>>;
+type SettingsFormValues = z.output<ReturnType<typeof createSettingsSchema>>;
 
 const providerPresets = {
   ollama: {
@@ -37,6 +44,12 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
+  const { t } = useUiPreferences();
+  const settingsSchema = createSettingsSchema({
+    enterApiKey: t("enterApiKey"),
+    validBaseUrl: t("validBaseUrl"),
+    enterModel: t("enterModel"),
+  });
   const settings = useChatStore((state) => state.settings);
   const updateSettings = useChatStore((state) => state.updateSettings);
   const {
@@ -88,6 +101,9 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
         shouldDirty: true,
         shouldValidate: true,
       });
+      if (watch("apiKey") === "ollama") {
+        setValue("apiKey", "", { shouldDirty: true });
+      }
     }
   }
 
@@ -108,11 +124,11 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
       >
         <div className="dialog-heading">
           <div>
-            <p className="eyebrow">PERSONALIZE YOUR MODEL</p>
-            <h2 id="settings-title">Model settings</h2>
+            <p className="eyebrow">{t("settingsEyebrow")}</p>
+            <h2 id="settings-title">{t("modelSettings")}</h2>
           </div>
           <button
-            aria-label="Close settings"
+            aria-label={t("closeSettings")}
             className="icon-button"
             onClick={onClose}
             type="button"
@@ -123,29 +139,22 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
 
         <form className="settings-form" onSubmit={handleSubmit(onSubmit)}>
           <label className="field">
-            <span>Provider setup</span>
+            <span>{t("providerSetup")}</span>
             <select
               onChange={(event) => selectProvider(event.target.value)}
               value={selectedProvider ?? ""}
             >
-              <option value="">Choose a preset</option>
-              <option value="ollama">Ollama (local, no API key)</option>
-              <option value="groq">Groq (free tier may be available)</option>
-              <option value="openrouter">
-                OpenRouter (free models may be available)
-              </option>
+              <option value="">{t("choosePreset")}</option>
+              <option value="ollama">{t("ollamaPreset")}</option>
+              <option value="groq">{t("groqPreset")}</option>
+              <option value="openrouter">{t("openrouterPreset")}</option>
             </select>
           </label>
           {isOllama ? (
-            <p className="field-note">
-              Run Ollama on this computer and pull <code>llama3.2</code> first.
-              This works with StreamChat&apos;s local development server (
-              <code>pnpm dev</code>); the Vercel demo cannot access your
-              computer&apos;s Ollama.
-            </p>
+            <p className="field-note">{t("ollamaInfo")}</p>
           ) : selectedProvider === "groq" ? (
             <p className="field-note">
-              Create your own key at{" "}
+              {t("groqInfo")}
               <a
                 href="https://console.groq.com/keys"
                 rel="noreferrer"
@@ -153,12 +162,11 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
               >
                 Groq Console
               </a>
-              , then choose a currently available model from its model list.
-              Free-tier limits and model availability can change.
+              {t("groqAfterKey")}
             </p>
           ) : selectedProvider === "openrouter" ? (
             <p className="field-note">
-              Create your own key at{" "}
+              {t("openrouterInfo")}
               <a
                 href="https://openrouter.ai/keys"
                 rel="noreferrer"
@@ -166,29 +174,23 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
               >
                 OpenRouter
               </a>
-              , then choose an available model from its{" "}
+              {t("openrouterAfterKey")}
               <a
                 href="https://openrouter.ai/models?free=true"
                 rel="noreferrer"
                 target="_blank"
               >
-                free models list
+                {t("freeModels")}
               </a>
-              . Free models have usage limits and may change.
+              {t("openrouterEnd")}
             </p>
           ) : null}
 
           <label className="field">
-            <span>
-              {isOllama ? "API key (not required by Ollama)" : "API key"}
-            </span>
+            <span>{isOllama ? t("ollamaApiKey") : t("apiKey")}</span>
             <input
               autoComplete="off"
-              placeholder={
-                isOllama
-                  ? "Placeholder only; Ollama ignores it"
-                  : "Paste your provider API key"
-              }
+              placeholder={isOllama ? t("placeholderOnly") : t("pasteApiKey")}
               type="password"
               {...register("apiKey")}
             />
@@ -197,13 +199,11 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
             )}
           </label>
           <p className="field-note">
-            {isOllama
-              ? "The preset fills in a placeholder; Ollama does not require or check a provider key."
-              : "Your key is sent to this app's server route with each request and stored in this browser's localStorage."}
+            {isOllama ? t("ollamaKeyNote") : t("apiKeyNote")}
           </p>
 
           <label className="field">
-            <span>OpenAI-compatible base URL</span>
+            <span>{t("baseUrl")}</span>
             <input
               autoCapitalize="none"
               autoComplete="url"
@@ -217,12 +217,12 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
           </label>
 
           <label className="field">
-            <span>Model ID</span>
+            <span>{t("modelId")}</span>
             <input
               autoCapitalize="none"
               autoComplete="off"
               list="model-suggestions"
-              placeholder={isOllama ? "llama3.2" : "Provider model ID"}
+              placeholder={isOllama ? "llama3.2" : t("providerModelId")}
               spellCheck="false"
               {...register("model")}
             />
@@ -236,17 +236,14 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
               <option value="openai/gpt-oss-120b" />
               <option value="qwen/qwen3-32b" />
             </datalist>
-            <span className="field-note">
-              Choose a suggestion or enter a model ID supported by your
-              provider.
-            </span>
+            <span className="field-note">{t("modelHint")}</span>
             {errors.model && (
               <span className="field-error">{errors.model.message}</span>
             )}
           </label>
 
           <label className="field">
-            <span>System prompt</span>
+            <span>{t("systemPrompt")}</span>
             <textarea rows={4} {...register("systemPrompt")} />
             {errors.systemPrompt && (
               <span className="field-error">{errors.systemPrompt.message}</span>
@@ -255,7 +252,7 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
 
           <div className="settings-row">
             <label className="field">
-              <span>Temperature</span>
+              <span>{t("temperature")}</span>
               <input
                 max="2"
                 min="0"
@@ -270,7 +267,7 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
               )}
             </label>
             <label className="field">
-              <span>Max output tokens</span>
+              <span>{t("maxOutputTokens")}</span>
               <input
                 max="16384"
                 min="1"
@@ -290,10 +287,10 @@ export function SettingsPanel({ onClose, onSaved }: SettingsPanelProps) {
               onClick={onClose}
               type="button"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button className="button button-primary" type="submit">
-              Save settings
+              {t("saveSettings")}
             </button>
           </div>
         </form>

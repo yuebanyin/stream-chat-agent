@@ -5,6 +5,7 @@ import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useEffect, useState } from "react";
+import { useUiPreferences } from "@/lib/ui-preferences";
 
 interface MarkdownContentProps {
   content: string;
@@ -39,6 +40,7 @@ function MarkdownCodeBlock({ children }: { children?: ReactNode }) {
 }
 
 function HighlightedCode({ content, language }: HighlightedCodeProps) {
+  const { t } = useUiPreferences();
   const [html, setHtml] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState("");
 
@@ -67,9 +69,9 @@ function HighlightedCode({ content, language }: HighlightedCodeProps) {
   async function copyCode() {
     try {
       await navigator.clipboard.writeText(content);
-      setCopyStatus("Copied");
+      setCopyStatus(t("copied"));
     } catch {
-      setCopyStatus("Copy failed");
+      setCopyStatus(t("copyFailed"));
     }
     window.setTimeout(() => setCopyStatus(""), 1_500);
   }
@@ -79,7 +81,7 @@ function HighlightedCode({ content, language }: HighlightedCodeProps) {
       <div className="code-toolbar">
         <span>{language}</span>
         <button className="copy-button" onClick={copyCode} type="button">
-          {copyStatus || "Copy"}
+          {copyStatus || t("copy")}
         </button>
       </div>
       {html ? (

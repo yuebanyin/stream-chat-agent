@@ -16,6 +16,7 @@ import { MessageList } from "@/components/chat/MessageList";
 import { SettingsPanel } from "@/components/settings/SettingsPanel";
 import { streamChatResponse } from "@/lib/sse/client";
 import { useChatStore } from "@/lib/store/chat-store";
+import { useUiPreferences } from "@/lib/ui-preferences";
 import type { ChatMessage } from "@/lib/types";
 
 function createMessage(
@@ -31,6 +32,7 @@ function createMessage(
 }
 
 export function ChatApp() {
+  const { t, localizeError } = useUiPreferences();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
@@ -91,9 +93,7 @@ export function ChatApp() {
     }
     if (!store.settings.apiKey.trim()) {
       setPendingPrompt(content);
-      store.setError(
-        "Add a provider API key or choose the local Ollama preset in model settings.",
-      );
+      store.setError(t("missingModel"));
       setSettingsOpen(true);
       return;
     }
@@ -153,7 +153,7 @@ export function ChatApp() {
           .setError(
             requestError instanceof Error
               ? requestError.message
-              : "The model request failed. Check your settings and try again.",
+              : t("requestFailed"),
           );
       }
     } finally {
@@ -174,9 +174,9 @@ export function ChatApp() {
 
   if (!isHydrated) {
     return (
-      <main aria-label="Loading saved conversations" className="app-loading">
+      <main aria-label={t("loadingSaved")} className="app-loading">
         <div className="loading-mark">S</div>
-        <p>Preparing your workspace...</p>
+        <p>{t("loading")}</p>
       </main>
     );
   }
@@ -205,7 +205,7 @@ export function ChatApp() {
         <header className="topbar">
           <div className="topbar-left">
             <button
-              aria-label="Open navigation"
+              aria-label={t("openNavigation")}
               className="icon-button mobile-menu-button"
               onClick={() => setMobileSidebarOpen(true)}
               type="button"
@@ -213,24 +213,29 @@ export function ChatApp() {
               <Menu size={19} />
             </button>
             <div className="workspace-title">
-              <span className="workspace-overline">WORKSPACE</span>
+              <span className="workspace-overline">{t("workspace")}</span>
               <span className="workspace-name">
-                {activeSession?.title ?? "New conversation"}
+                {!activeSession?.title || activeSession.title === "New chat"
+                  ? t("newConversation")
+                  : activeSession.title}
               </span>
             </div>
           </div>
           <div className="topbar-actions">
             <button
-              aria-label={`Current model: ${settings.model || "No model selected"}. Open model settings`}
+              aria-label={t("currentModel").replace(
+                "{model}",
+                settings.model || t("noModel"),
+              )}
               className="model-chip"
               onClick={() => setSettingsOpen(true)}
               type="button"
             >
               <span aria-hidden="true" className="model-chip-dot" />
-              {settings.model || "No model selected"}
+              {settings.model || t("noModel")}
             </button>
             <button
-              aria-label="Open model settings"
+              aria-label={t("openModelSettings")}
               className="icon-button settings-icon-button"
               onClick={() => setSettingsOpen(true)}
               type="button"
@@ -239,7 +244,7 @@ export function ChatApp() {
             </button>
             {activeSession && (
               <button
-                aria-label="Clear conversation"
+                aria-label={t("clearConversation")}
                 className="icon-button clear-icon-button"
                 disabled={isStreaming}
                 onClick={() =>
@@ -251,7 +256,7 @@ export function ChatApp() {
               </button>
             )}
             <a
-              aria-label="Open GitHub"
+              aria-label={t("openGithub")}
               className="icon-button github-link"
               href={
                 process.env.NEXT_PUBLIC_GITHUB_URL ??
@@ -263,7 +268,7 @@ export function ChatApp() {
               <GitBranch size={17} />
             </a>
             <button
-              aria-label="More options"
+              aria-label={t("moreOptions")}
               className="icon-button more-button"
               onClick={() => setSettingsOpen(true)}
               type="button"
@@ -275,9 +280,9 @@ export function ChatApp() {
 
         {error && (
           <div className="error-banner" role="alert">
-            <span>{error}</span>
+            <span>{localizeError(error)}</span>
             <button
-              aria-label="Dismiss error"
+              aria-label={t("dismissError")}
               className="error-dismiss"
               onClick={() => useChatStore.getState().setError(null)}
               type="button"
@@ -295,9 +300,9 @@ export function ChatApp() {
           {!settings.apiKey.trim() && (
             <div className="setup-notice">
               <Sparkles size={16} />
-              <span>Connect a model to start chatting.</span>
+              <span>{t("connectModel")}</span>
               <button onClick={() => setSettingsOpen(true)} type="button">
-                Set up model
+                {t("setUpModel")}
               </button>
             </div>
           )}
