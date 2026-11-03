@@ -51,7 +51,7 @@ Open [http://localhost:3000](http://localhost:3000), choose **Model settings**, 
 | Ollama                           | `http://localhost:11434/v1`      | Development only; start Ollama and pull a model first. The route accepts loopback HTTP only outside production. |
 | Other OpenAI-compatible provider | Your provider's HTTPS `/v1` URL  | Add its exact hostname to `LLM_ALLOWED_HOSTS` on the server.                                                    |
 
-Ollama and provider free tiers are subject to each provider's availability, terms, and rate limits. A Vercel-hosted app cannot reach Ollama running on a visitor's computer.
+For local Ollama, enter a non-empty placeholder such as `ollama` in the API key field; the local OpenAI-compatible endpoint does not require provider authentication. Ollama and provider free tiers are subject to each provider's availability, terms, and rate limits. A Vercel-hosted app cannot reach Ollama running on a visitor's computer.
 
 ## Configuration
 
