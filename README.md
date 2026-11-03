@@ -4,11 +4,14 @@
 ![React](https://img.shields.io/badge/React-18-149eca?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript)
 ![License](https://img.shields.io/badge/license-MIT-3b8067)
+![GitHub](https://img.shields.io/badge/GitHub-yuebanyin%2Fstream--chat--agent-181717?logo=github)
 ![Demo](https://img.shields.io/badge/demo-not%20deployed-lightgrey)
 
 **A developer-first, open-source AI chat workspace with incremental streaming, rich Markdown, and bring-your-own-model credentials.**
 
 > The public demo has not been deployed yet. This project intentionally does not ship with a shared provider key; configure your own model credentials to use it.
+
+[Source code](https://github.com/yuebanyin/stream-chat-agent) · [Deploy your own instance](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyuebanyin%2Fstream-chat-agent)
 
 <!-- Add a captured UI image at docs/screenshots/chat-workspace.png before the first public release. -->
 
@@ -33,7 +36,7 @@ Next.js 15 App Router · React 18 · TypeScript strict mode · Tailwind CSS v4 �
 ## Quick start
 
 ```bash
-git clone https://github.com/<your-account>/stream-chat-agent.git
+git clone https://github.com/yuebanyin/stream-chat-agent.git
 cd stream-chat-agent
 pnpm install
 cp .env.example .env.local
@@ -61,8 +64,8 @@ Copy `.env.example` to `.env.local` when using a custom provider:
 # Comma-separated exact hostnames for trusted OpenAI-compatible providers.
 LLM_ALLOWED_HOSTS=api.example.com
 
-# Set this after creating the public GitHub repository.
-NEXT_PUBLIC_GITHUB_URL=https://github.com/<your-account>/stream-chat-agent
+# Public source repository.
+NEXT_PUBLIC_GITHUB_URL=https://github.com/yuebanyin/stream-chat-agent
 ```
 
 The route allows the built-in OpenAI, Groq, and OpenRouter hosts. It rejects non-HTTPS custom hosts, credentials embedded in URLs, and unlisted destinations to reduce server-side request forgery risk. Localhost is allowed only in development for Ollama. Do not add a hostname you do not control or trust.
